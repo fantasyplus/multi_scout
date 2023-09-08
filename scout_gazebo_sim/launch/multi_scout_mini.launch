@@ -1,0 +1,69 @@
+<launch>
+    <!-- 打印时显示节点 -->
+    <env name="ROSCONSOLE_FORMAT" value="[${node}]: ${message}" />
+
+    <arg name="x1" default="1" />
+    <arg name="y1" default="1" />
+    <arg name="z1" default="0.26" />
+    <arg name="yaw1" default="1.5707" />
+    <arg name="robot1" default="scout1" />
+    <arg name="x2" default="13" />
+    <arg name="y2" default="15" />
+    <arg name="z2" default="0.26" />
+    <arg name="yaw2" default="3.1415" />
+    <arg name="robot2" default="scout2" />
+
+    <!-- <node pkg="map_server" type="map_server" name="map_server1"
+        args="$(find scout_gazebo_sim)/map/test.yaml" /> -->
+
+    <group ns="$(arg robot1)">
+        <param name="tf_prefix" value="$(arg robot1)" />
+
+        <include file="$(find scout_gazebo_sim)/launch/spawn_scout_mini1.launch">
+            <arg name="x" value="$(arg x1)" />
+            <arg name="y" value="$(arg y1)" />
+            <arg name="z" value="$(arg z1)" />
+            <arg name="yaw" default="$(arg yaw1)" />
+            <arg name="robot_namespace" value="$(arg robot1)" />
+        </include>
+
+
+        <include file="$(find scout_gazebo_sim)/launch/octomaptransform.launch">
+            <arg name="robot_namespace" value="$(arg robot1)" />
+        </include>
+
+        <include file="$(find scout_gazebo_sim)/launch/move_base_namespace.launch">
+            <arg name="robot_namespace" value="$(arg robot1)" />
+        </include>
+
+        <node pkg="tf" type="static_transform_publisher" name="map_to_odom1"
+            args="0.0 0.0 0.0 0 0 0.0 map '$(arg robot1)/odom' 1000" />
+    </group>
+
+
+    <group ns="$(arg robot2)">
+        <param name="tf_prefix" value="$(arg robot2)" />
+
+        <include file="$(find scout_gazebo_sim)/launch/spawn_scout_mini2.launch">
+            <arg name="x" value="$(arg x2)" />
+            <arg name="y" value="$(arg y2)" />
+            <arg name="z" value="$(arg z2)" />
+            <arg name="yaw" default="$(arg yaw2)" />
+            <arg name="robot_namespace" value="$(arg robot2)" />
+        </include>
+
+        <include file="$(find scout_gazebo_sim)/launch/octomaptransform.launch">
+            <arg name="robot_namespace" value="$(arg robot2)" />
+        </include>
+
+        <include file="$(find scout_gazebo_sim)/launch/move_base_namespace.launch">
+            <arg name="robot_namespace" value="$(arg robot2)" />
+        </include>
+
+        <node pkg="tf" type="static_transform_publisher" name="map_to_odom2"
+            args="0.0 0.0 0.0 0 0 0.0 map '$(arg robot2)/odom' 1000" />
+    </group>
+
+    <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find scout_gazebo_sim)/rviz/multi_navigation.rviz" />
+</launch>

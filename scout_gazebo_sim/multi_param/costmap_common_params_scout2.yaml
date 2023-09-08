@@ -1,0 +1,24 @@
+footprint: [[0.612, 0.245], [0.612, -0.245], [-0.612, -0.245], [-0.612, 0.245]]    
+
+obstacle_range: 4.5
+raytrace_range: 4.5
+
+static_layer:
+  enabled: true
+  
+obstacle_layer:
+  enable: true
+
+  track_unknown_space: true
+  combination_method: 1
+
+  # obstacle_range: 6.5
+  # raytrace_range: 6.0
+
+  observation_sources: velodyne
+  velodyne: {
+    # sensor_frame: velodyne, 
+    data_type: PointCloud2, 
+    topic: /scout2/velodyne_points, 
+    marking: true, 
+    clearing: true}

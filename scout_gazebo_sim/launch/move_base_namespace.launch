@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Namespace and tf_prefix are assumed to be the same -->
+  <arg name="robot_namespace" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/base_global_planner_params.yaml" command="load" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/costmap_common_params_$(arg robot_namespace).yaml"
+      command="load" ns="global_costmap" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/costmap_common_params_$(arg robot_namespace).yaml"
+    command="load" ns="local_costmap" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find scout_gazebo_sim)/multi_param/teb_local_planner_params_$(arg robot_namespace).yaml" command="load" />
+
+
+    <param name="global_costmap/global_frame" value="$(arg robot_namespace)/odom" />
+    <param name="global_costmap/robot_base_frame" value="$(arg robot_namespace)/base_link" />
+    <param name="local_costmap/global_frame" value="$(arg robot_namespace)/odom" />
+    <param name="local_costmap/robot_base_frame" value="$(arg robot_namespace)/base_link" />
+
+    <remap from="map" to="projected_map" />
+
+  </node>
+
+</launch>

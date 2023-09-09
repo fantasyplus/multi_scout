@@ -3,6 +3,7 @@
 import json
 from os import path
 import threading
+import time
 
 import rospy
 import actionlib
@@ -103,38 +104,40 @@ def processPathsMultiThread(paths,tf_listener):
         t.join()  
 
 
-def processPathForRobot(robot_name, path,tf_listener):
+def processPathForRobot(robot_name, path, tf_listener):
     global arrival_times
     if robot_name not in arrival_times:
-        arrival_times[robot_name] = {'last_arrival': 0, 'intervals': [],'arrival_times':[0,]}
+        arrival_times[robot_name] = {'intervals': [], 'arrival_times': []}
 
-    robot_state = getModelState(robot_name,tf_listener)
+    robot_state = getModelState(robot_name, tf_listener)
     if robot_state == None:
         print("get {} state failed".format(robot_name))
         return
 
     robot_yaw = robot_state[2]
+    start_time = None  # 初始化开始时间
+
     for point in path:
+        if start_time is None:
+            start_time = time.time()  # 记录第一个目标点的发送时间
+            arrival_times[robot_name]['arrival_times'].append(0)  # 第一个点的到达时间为0
+
         print("send goal to ", robot_name, point)
 
         status = moveBaseClient(robot_name, point[0], point[1], robot_yaw)
 
         if 'Goal' in status:
-            current_time = rospy.get_time()
-            if arrival_times[robot_name]['last_arrival'] == 0:
-                interval = 0
-            else:
-                interval = current_time - arrival_times[robot_name]['last_arrival']
-            
-            arrival_times[robot_name]['intervals'].append(interval)
-            arrival_times[robot_name]['last_arrival'] = current_time
-            arrival_times[robot_name]['arrival_times'].append(current_time)
+            current_time = time.time()  # 获取当前时间
+            elapsed_time = current_time - start_time  # 计算从开始到现在经过的时间
 
-            print(f"Robot {robot_name} reached goal at {current_time}s, interval: {interval}s")
+            arrival_times[robot_name]['arrival_times'].append(elapsed_time)  # 保存到达当前目标点的时间
+            arrival_times[robot_name]['intervals'].append(elapsed_time - arrival_times[robot_name]['arrival_times'][-2])  # 保存到达当前目标点和上一个目标点的时间间隔
+
+            print(f"Robot {robot_name} reached goal at {elapsed_time}s")
 
             print("send {} next goal".format(robot_name))
             print("----------------------------------")
-    
+
     print("Robot {} finished path".format(robot_name))
 
 if __name__ =='__main__':

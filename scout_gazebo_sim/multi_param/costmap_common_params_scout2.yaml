@@ -1,7 +1,7 @@
 footprint: [[0.612, 0.245], [0.612, -0.245], [-0.612, -0.245], [-0.612, 0.245]]    
 
-obstacle_range: 4.5
-raytrace_range: 4.5
+obstacle_range: 2
+raytrace_range: 6
 
 static_layer:
   enabled: true
@@ -12,8 +12,8 @@ obstacle_layer:
   track_unknown_space: true
   combination_method: 1
 
-  # obstacle_range: 6.5
-  # raytrace_range: 6.0
+  obstacle_range: 2
+  raytrace_range: 6
 
   observation_sources: velodyne
   velodyne: {

@@ -2,19 +2,17 @@
     <!-- 打印时显示节点 -->
     <env name="ROSCONSOLE_FORMAT" value="[${node}]: ${message}" />
 
-    <arg name="x1" default="1" />
-    <arg name="y1" default="1" />
+    <arg name="x1" default="2" />
+    <arg name="y1" default="4" />
     <arg name="z1" default="0.26" />
     <arg name="yaw1" default="1.5707" />
     <arg name="robot1" default="scout1" />
-    <arg name="x2" default="13" />
-    <arg name="y2" default="15" />
+    <arg name="x2" default="26" />
+    <arg name="y2" default="28" />
     <arg name="z2" default="0.26" />
     <arg name="yaw2" default="3.1415" />
     <arg name="robot2" default="scout2" />
 
-    <!-- <node pkg="map_server" type="map_server" name="map_server1"
-        args="$(find scout_gazebo_sim)/map/test.yaml" /> -->
 
     <group ns="$(arg robot1)">
         <param name="tf_prefix" value="$(arg robot1)" />

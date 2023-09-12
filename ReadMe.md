@@ -5,6 +5,7 @@ roslaunch scout_gazebo_sim world.launch
 
 second launch
 ```
+export PYTHONPATH="/opt/ros/melodic/lib/python2.7/dist-packages:/home/xt/useful_pkgs/multi_scout/devel/lib/python3/dist-packages"
 roslaunch scout_gazebo_sim multi_scout_mini.launch
 ```
 
@@ -29,5 +30,3 @@ catkin_make --cmake-args \
             -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m \
             -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
 Do not forget to always source your workspace!
-
-export PYTHONPATH="/home/xt/useful_pkgs/multi_scout/devel/lib/python3/dist-packages;$PYTHONPATH"

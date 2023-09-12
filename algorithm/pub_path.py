@@ -19,7 +19,10 @@ state_lock = threading.Lock()
 client_lock = threading.Lock()
 
 # 用于保存到达时间和间隔的全局字典
-arrival_times = {}  
+arrival_times = {} 
+
+# 创建全局 Barrier 对象
+barrier = None
 
 def readPaths():
     json_path=path.dirname(__file__)+"/data.json"
@@ -122,6 +125,7 @@ def processPathForRobot(robot_name, path, tf_listener):
             start_time = time.time()  # 记录第一个目标点的发送时间
             arrival_times[robot_name]['arrival_times'].append(0)  # 第一个点的到达时间为0
 
+        print("----------------------------------")
         print("send goal to ", robot_name, point)
 
         status = moveBaseClient(robot_name, point[0], point[1], robot_yaw)
@@ -135,13 +139,25 @@ def processPathForRobot(robot_name, path, tf_listener):
 
             print(f"Robot {robot_name} reached goal at {elapsed_time}s")
 
-            print("send {} next goal".format(robot_name))
+            print("Robot {} arrived ,waiting....".format(robot_name))
+            barrier.wait()  #等待其他线程
+
             print("----------------------------------")
+            print("send {} next goal".format(robot_name))
+        else:
+            print("-----error!!!!-----")
+            print(status)
+            print("exit")
+            return
 
     print("Robot {} finished path".format(robot_name))
 
 if __name__ =='__main__':
     paths=readPaths()
+
+    #init barrier
+    num_threads = len(paths)
+    barrier = threading.Barrier(num_threads)
 
     rospy.init_node('pub_path')
     rate=rospy.Rate(100)
